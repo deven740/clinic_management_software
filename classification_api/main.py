@@ -3,21 +3,14 @@ from fastapi import FastAPI, UploadFile
 from time import sleep
 import asyncio
 
-from model.load_model import model
-from model.predict import predict
+from model import classify
 
 app = FastAPI()
 
+app.include_router(classify.router)
 
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
 
 
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
-        # convert that to bytes
-    image_bytes = await file.read()
-    predict(image_bytes=image_bytes)
-    # await asyncio.sleep(5)
-    return {"filename": file.filename}

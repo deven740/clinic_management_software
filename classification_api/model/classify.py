@@ -1,6 +1,14 @@
+from fastapi import APIRouter, UploadFile 
 import torchvision.transforms as transforms
 from PIL import Image
 import io
+
+
+router = APIRouter(
+    prefix="/classify",
+    tags=["classify"]
+)
+
 
 def transform_image(image_bytes):
     my_transforms = transforms.Compose([transforms.Resize(255),
@@ -18,5 +26,14 @@ def transform_image(image_bytes):
 
 
 def predict(image_bytes):
-    print('in predict')
     transform_image(image_bytes=image_bytes)
+
+
+@router.post("/")
+async def classify(file: UploadFile):
+        # convert that to bytes
+    image_bytes = await file.read()
+    # predict(image_bytes=image_bytes)
+    # await asyncio.sleep(5)
+    return {"filename": file.filename}
+
