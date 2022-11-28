@@ -13,6 +13,13 @@ class UserSchema(BaseModel):
 class UserResponseModel(BaseModel):
     username : str
     role: str
+    class Config:
+        orm_mode = True
+
+
+class SingleUserResponseModel(UserResponseModel):
+    access_token : str
+    refresh_token : str
 
     class Config:
         orm_mode = True

@@ -6,7 +6,7 @@ from .utils import get_password_hash
 
 
 def get_user(db: Session, username: str = None):
-    return db.query(UserModel).filter(UserModel.username == username).first()
+    return db.query(UserModel.username, UserModel.password, RoleModel.role).join(RoleModel).filter(UserModel.username == username).first()
 
 
 # def get_user_by_email(db: Session, email: str):
