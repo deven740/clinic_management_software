@@ -7,5 +7,5 @@ app.include_router(users.router)
 
 
 @app.get("/")
-async def read_root():
+def read_root():
     return {"Hello": "World"}

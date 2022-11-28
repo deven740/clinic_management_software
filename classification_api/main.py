@@ -10,7 +10,7 @@ app = FastAPI()
 app.include_router(classify.router)
 
 @app.get("/")
-async def read_root():
+def read_root():
     return {"Hello": "World"}
 
 
