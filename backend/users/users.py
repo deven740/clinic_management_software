@@ -61,15 +61,15 @@ def login(user: UserSchema, Authorize: AuthJWT = Depends(), db: Session = Depend
     response = user_exists._asdict()
 
     if verify_password(user.password, user_exists.password):
-        access_token = Authorize.create_access_token(subject=user.username, expires_time=timedelta(seconds=30))
-        refresh_token = Authorize.create_refresh_token(subject=user.username, expires_time=timedelta(seconds=30))
+        access_token = Authorize.create_access_token(subject=user.username, expires_time=timedelta(days=30))
+        refresh_token = Authorize.create_refresh_token(subject=user.username, expires_time=timedelta(days=30))
         response.update({'access_token': access_token, 'refresh_token': refresh_token})
         return response
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Password do not match")
 
 
-@router.post('/refresh', response_model=UserTokenResponseModel, response_model_exclude_none=True)
+@router.post('/refresh', response_model=UserTokenResponseModel, response_model_exclude={"role", "refresh_token", "username"})
 def refresh(Authorize: AuthJWT = Depends(), credentials: HTTPAuthorizationCredentials = Depends(security)):
     """
     The jwt_refresh_token_required() function insures a valid refresh
@@ -78,7 +78,8 @@ def refresh(Authorize: AuthJWT = Depends(), credentials: HTTPAuthorizationCreden
     token, and use the create_access_token() function again to make a new access token
     """
     Authorize.jwt_refresh_token_required()
-
     current_user = Authorize.get_jwt_subject()
     new_access_token = Authorize.create_access_token(subject=current_user, expires_time=timedelta(days=30))
-    return {"access_token": new_access_token}
+    response =  {"access_token": new_access_token, "role": "", "refresh_token": "", "username": ""}
+    
+    return response

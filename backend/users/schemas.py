@@ -11,15 +11,15 @@ class UserSchema(BaseModel):
 
 
 class UserResponseModel(BaseModel):
-    username : str | None = None
-    role: str | None = None
+    username : str
+    role: str
     class Config:
         orm_mode = True
 
 
 class UserTokenResponseModel(UserResponseModel):
-    access_token : str | None = None
-    refresh_token : str | None = None
+    access_token : str
+    refresh_token : str
 
     class Config:
         orm_mode = True
