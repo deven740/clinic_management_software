@@ -1,4 +1,5 @@
-import * as React from "react";
+// import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -21,6 +22,9 @@ import { mainListItems, secondaryListItems } from "./listItems";
 // import Chart from './Chart';
 import Deposits from "./Deposits";
 import Orders from "./Orders";
+import axiosApiInstance from "../../AxiosInstancs.js";
+import axios from "axios";
+import Appointment from "../appointment/Appointment";
 
 function Copyright(props) {
   return (
@@ -89,9 +93,41 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
+  const [user, setUser] = useState("");
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  useEffect(() => {
+    const fetchUsersData = async (e) => {
+      try {
+        const response = await axiosApiInstance.get(
+          "http://localhost:8003/users/user"
+        );
+        setUser(response.data.username.toUpperCase());
+        console.log(response.data);
+      } catch (err) {
+        console.log(err.response);
+      }
+    };
+
+    fetchUsersData();
+
+    return () => {
+      // this now gets called when the component unmounts
+    };
+  }, []);
+
+  const fetchUsersData = async (e) => {
+    try {
+      const res = await axiosApiInstance.get(
+        "http://localhost:8000/users/user"
+      );
+      console.log(res.data);
+    } catch (err) {
+      console.log(err.response);
+    }
   };
 
   return (
@@ -123,7 +159,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Welcome, {user}
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -149,7 +185,7 @@ function DashboardContent() {
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            {/* {secondaryListItems} */}
           </List>
         </Drawer>
         <Box
@@ -166,9 +202,9 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
+            {/* <Appointment /> */}
+            <Grid container spacing={10}>
+              <Grid item xs={50} md={50} lg={50}>
                 <Paper
                   sx={{
                     p: 2,
@@ -177,11 +213,10 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  {/* <Chart /> */}
+                  <Appointment />
                 </Paper>
               </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
+              {/* <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
                     p: 2,
@@ -193,14 +228,12 @@ function DashboardContent() {
                   <Deposits />
                 </Paper>
               </Grid>
-              {/* Recent Orders */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                   <Orders />
                 </Paper>
-              </Grid>
+              </Grid> */}
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
       </Box>
