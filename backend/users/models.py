@@ -19,7 +19,3 @@ class RoleModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     role = Column(String, unique=True, nullable=False)
     user = relationship('UserModel')
-
-
-
-Base.metadata.create_all(bind=engine)

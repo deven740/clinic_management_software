@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from users import users
+from specialty import specialty
 import auth
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(users.router)
+app.include_router(specialty.router)
 
 
 @app.get("/")
