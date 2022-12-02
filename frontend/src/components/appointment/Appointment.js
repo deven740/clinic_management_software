@@ -1,16 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Title from "../dashboard/Title";
+import axiosApiInstance from "../../AxiosInstancs";
+import axios from "axios";
+
+const backendURL = process.env.REACT_APP_BACKEND_URL;
+
+console.log(process.env.REACT_APP_BACKEND_URL);
 
 export default function BoxSx() {
+  const [value, setValue] = useState("");
+  const [specialty, setSpecialty] = useState([{ id: null, label: "" }]);
+
   const handleChangeSpecialty = (e) => {
     console.log(e.target.value);
   };
 
-  const [value, setValue] = React.useState("");
+  useEffect(() => {
+    const fetchSpecialty = async (e) => {
+      try {
+        const response = await axios.get(`${backendURL}/specialty`);
+        const responseData = response.data;
+        console.log(responseData);
+        const resultArray = responseData.map((elm) => ({
+          id: elm.id,
+          label: elm.specialty.toUpperCase(),
+        }));
+
+        setSpecialty(resultArray);
+        console.log(resultArray);
+      } catch (err) {
+        console.log(err.response);
+      }
+    };
+
+    fetchSpecialty();
+
+    return () => {
+      // this now gets called when the component unmounts
+    };
+  }, []);
 
   return (
     <Grid container spacing={2}>
@@ -19,7 +51,7 @@ export default function BoxSx() {
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={top100Films}
+          options={specialty}
           sx={{ width: 300 }}
           renderInput={(params) => (
             <TextField {...params} label="Select Specialty" />
