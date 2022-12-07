@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from . import crud
-from .schemas import SpecialtyResponseModel
+from .schemas import SpecialtyResponseModel, DoctorSpecialtyResponseModel
 
 
 router = APIRouter(
@@ -21,3 +21,8 @@ def test(db: Session = Depends(get_db)):
     return specialty
 
 
+@router.get("/filter-doctors-by-specialty", response_model=List[DoctorSpecialtyResponseModel])
+def test(db: Session = Depends(get_db), specialty: str | None = None):
+    result = crud.filter_doctors_by_specialty(db, specialty)
+    print(result)
+    return result

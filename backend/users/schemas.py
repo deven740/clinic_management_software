@@ -1,10 +1,14 @@
-from typing import Dict
+from typing import Dict, Literal
 from pydantic import BaseModel, Field
 
 
 class UserSchema(BaseModel):
     username: str = Field(min_length=5)
     password: str = Field(min_length=8)
+    first_name: str
+    last_name: str
+    role: Literal['patient', 'doctor', 'receptionist']
+    specialty: str = None
 
     class Config:
         orm_mode = True
@@ -12,7 +16,7 @@ class UserSchema(BaseModel):
 
 class UserResponseModel(BaseModel):
     username : str
-    role: str
+    # role: str
     class Config:
         orm_mode = True
 

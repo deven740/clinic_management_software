@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from users import users
-from specialty import specialty
+from details import details
 import auth
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi.middleware.cors import CORSMiddleware
-
-
+from database import Base, engine
 
 app = FastAPI()
 
@@ -25,7 +24,7 @@ app.add_middleware(
 )
 
 app.include_router(users.router)
-app.include_router(specialty.router)
+app.include_router(details.router)
 
 
 @app.get("/")
@@ -34,4 +33,6 @@ def read_root():
 
 
 app.add_exception_handler(AuthJWTException, auth.authjwt_exception_handler)
+
+Base.metadata.create_all(bind=engine)
 

@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Session
 
-from .models import UserModel, RoleModel
+from .models import UserModel
+from details.models import DetailsModel, RoleModel, SpecialtyModel
 from .schemas import UserSchema
-from .utils import get_password_hash
+from details.schemas import SpecialtySchema
+from .utils import get_password_hash, commit_refresh
 
 
 def get_user(db: Session, username: str = None):
-    return db.query(UserModel.username, UserModel.password, RoleModel.role).join(RoleModel).filter(UserModel.username == username).first()
+    return db.query(UserModel.username, UserModel.password).filter(UserModel.username == username).first()
 
 
 # def get_user_by_email(db: Session, email: str):
@@ -14,17 +16,24 @@ def get_user(db: Session, username: str = None):
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(UserModel.username, RoleModel.role).join(RoleModel).offset(skip).limit(limit).all()
+    return db.query(UserModel.username).all()
 
 
 def create_user(db: Session, user: UserSchema):
     user.password = get_password_hash(user.password)
-    role = db.query(RoleModel).filter(RoleModel.role == "patient").one()
-    user_model = UserModel(**user.dict(), role_id=role.id)
+    role = db.query(RoleModel).filter(RoleModel.role == user.role).one()
 
-    db.add(user_model)
-    db.commit()
-    db.refresh(user_model)
+    specialty_model = SpecialtySchema()
+    if user.role == 'doctor' and user.specialty:
+        result = db.query(SpecialtyModel.specialty, SpecialtyModel.id).filter(SpecialtyModel.specialty == user.specialty).one()
+        specialty_model = SpecialtyModel(**result)
+
+    user_model = UserModel(username=user.username, password=user.password)
+    commit_refresh(db, user_model)
+
+    details_model = DetailsModel(first_name=user.first_name, last_name=user.last_name, role_id=role.id, user_id=user_model.id, specialty_id=specialty_model.id)
+    commit_refresh(db, details_model)
+
     return user_model
 
 
