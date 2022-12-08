@@ -12,7 +12,8 @@ def get_roles(db: Session, role: str = None):
 
 
 def filter_doctors_by_specialty(db: Session, specialty: str = None):
-    result =  db.query(DetailsModel.full_name, SpecialtyModel.id).join(SpecialtyModel)
+    result =  db.query(DetailsModel.full_name, SpecialtyModel.id.label("specialty_id"), DetailsModel.id.label("details_id")).join(SpecialtyModel)
+    print(result)
     if specialty:
         return result.filter(SpecialtyModel.specialty == specialty).all()
     return result.all()

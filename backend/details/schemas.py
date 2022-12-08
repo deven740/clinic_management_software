@@ -20,4 +20,5 @@ class SpecialtySchema(BaseModel):
 
 class DoctorSpecialtyResponseModel(BaseModel):
     full_name: str
-    id: int
+    details_id: int
+    specialty_id: int
