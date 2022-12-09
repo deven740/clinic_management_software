@@ -15,14 +15,12 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[SpecialtyResponseModel])
-def test(db: Session = Depends(get_db)):
+def get_specialty(db: Session = Depends(get_db)):
     specialty = crud.get_specialty(db)
-    print(specialty)
     return specialty
-
+    
 
 @router.get("/filter-doctors-by-specialty", response_model=List[DoctorSpecialtyResponseModel])
-def test(db: Session = Depends(get_db), specialty: str | None = None):
+def filter_doctors_by_specialty(db: Session = Depends(get_db), specialty: str | None = None):
     result = crud.filter_doctors_by_specialty(db, specialty)
-    print(result)
     return result
