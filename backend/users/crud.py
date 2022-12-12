@@ -4,7 +4,8 @@ from .models import UserModel
 from details.models import DetailsModel, RoleModel, SpecialtyModel
 from .schemas import UserSchema
 from details.schemas import SpecialtySchema
-from .utils import get_password_hash, commit_refresh
+from .utils import get_password_hash
+from utils import commit_refresh
 
 
 def get_user(db: Session, username: str = None):
