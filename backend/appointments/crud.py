@@ -5,7 +5,7 @@ from utils import commit_refresh
 
 
 def filter_appointments_by_doctor_and_date(db: Session, appointment_date: date, doctor_id: int):
-    return db.query(AppointmentModel).filter(AppointmentModel.doctor_id==doctor_id, AppointmentModel.appointment_date==appointment_date).all()
+    return db.query(AppointmentModel).filter(AppointmentModel.doctor_id==doctor_id, AppointmentModel.appointment_date==appointment_date, AppointmentModel.is_booked==False).all()
 
 
 def change_booking_status(db: Session, appointment_id: int, previous_appointment_id: int = None):

@@ -9,10 +9,8 @@ class FilterAppointment(BaseModel):
         orm_mode = True
 
 class AppointmentResponseModel(BaseModel):
-    appointment_id: int
-    appointment_date : date
+    id: int
     appointment_slot : str
-    is_booked: bool
     class Config:
         orm_mode = True
 

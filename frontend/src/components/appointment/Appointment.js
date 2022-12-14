@@ -6,6 +6,8 @@ import TextField from "@mui/material/TextField";
 import Title from "../dashboard/Title";
 import axiosApiInstance from "../../AxiosInstancs";
 import axios from "axios";
+import { format, addDays, parseISO } from "date-fns";
+import FullWidthTabs from "../tabs/Tabs";
 
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -16,6 +18,9 @@ export default function BoxSx() {
   const [doctorsOptions, setDoctorsOptions] = useState(emptyOptionsArray);
   const [clearInput, setClearInput] = useState(true);
   const [disabled, setDisabled] = useState(true);
+  const [doctor, setDoctor] = useState(null);
+  const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [slotsArray, setSlotsArray] = useState(null);
 
   useEffect(() => {
     const fetchSpecialty = async (e) => {
@@ -66,7 +71,46 @@ export default function BoxSx() {
     setClearInput(!clearInput);
     setSelectedSpecialty(newValue);
     setDisabled(true);
+    setDoctor(null);
   };
+
+  const onChangeDoctor = (event, newValue) => {
+    if (!newValue) {
+      console.log(newValue);
+      setDoctor(newValue);
+      return;
+    }
+    setDoctor(newValue);
+    const data = {
+      appointment_date: date,
+      doctor_id: newValue.id,
+    };
+    const fetchAppointmentsByDateAndDoctor = async (e) => {
+      try {
+        const response = await axios.post(
+          `${backendURL}/appointments/filter-appointments-by-doctor-and-date`,
+          data
+        );
+        const responseData = response.data;
+        console.log(responseData);
+        // const resultArray = responseData.map((elm) => ({
+        //   id: elm.details_id,
+        //   label: elm.full_name.toUpperCase(),
+        // }));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchAppointmentsByDateAndDoctor();
+  };
+
+  // useEffect(() => {
+  //   if (!doctor) return;
+
+  //   console.log("effect ran");
+
+  //   return () => {};
+  // }, [doctor]);
 
   return (
     <Grid container spacing={2}>
@@ -99,8 +143,16 @@ export default function BoxSx() {
           )}
           key={clearInput}
           disabled={disabled}
+          onChange={onChangeDoctor}
         />
       </Grid>
+      {doctor ? (
+        <Grid item xs={12}>
+          <FullWidthTabs doctorID={doctor} />
+        </Grid>
+      ) : (
+        ""
+      )}
     </Grid>
   );
 }
